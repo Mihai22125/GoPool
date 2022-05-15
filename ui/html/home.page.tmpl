@@ -1,0 +1,25 @@
+{{template "base" .}}
+
+{{define "title"}}Home{{end}}
+
+{{define "body"}}
+    <h2>Latest Pools</h2>
+    {{if .Pools}}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>StartDate</th>
+            <th>ID</th>
+        </tr>
+        {{range .Pools}}
+        <tr>
+            <td><a href='/pool/{{.ID}}'>{{.Name}}</a></td>
+            <td>{{humanDate .PoolConfig.StartDate}}</td>
+            <td>#{{.ID}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing to see here yet!</p> 
+    {{end}}
+{{end}}

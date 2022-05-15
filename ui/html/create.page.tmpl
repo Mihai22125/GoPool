@@ -1,0 +1,55 @@
+{{template "base" .}}
+
+{{define "title"}} Create a New Pool{{end}}
+
+{{define "body"}}
+<form action='/pool/create' method='POST'>
+    <div>
+        <label>Name:</label>
+        {{with .Form.Errors.Get "name"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='name' value='{{ or (.Form.Get "name") .Pool.Name}}'>
+    </div>
+        <div>
+        <label>number of options:</label>
+        {{with .Form.Errors.Get "nrOfOptions"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='nrOfOptions' value='{{or (.Form.Get "nrOfOptions") .Pool.NumberOfOptions}}'>
+    </div>
+    <div>
+        <label>Start Date:</label>
+        {{with .Form.Errors.Get "startDate"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='date' name='startDate' value='{{or (.Form.Get "startDate") .Pool.PoolConfig.StartDate}}'>
+    </div>
+    <div>
+        <label>Start Time:</label>
+        {{with .Form.Errors.Get "startTime"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='time' name='startDate' value='{{or (.Form.Get "startTime") .Pool.PoolConfig.StartDate}}'>
+    </div>
+    <div>
+        <label>End Date:</label>
+        {{with .Form.Errors.Get "endDate"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='date' name='endDate' value='{{or (.Form.Get "endDate") .Pool.PoolConfig.EndDate}}'>
+    </div>
+    <div>
+        <label>Type:</label> 
+        {{with .Form.Errors.Get "type"}}
+            <label class='error'>{{.}}</label> 
+        {{end}}
+        {{$type := or (.Form.Get "type") "0"}}
+        <input type='radio' name='type' value='0' {{if (eq $type "0")}}checked{{end}}> Single-vote
+        <input type='radio' name='type' value='1' {{if (eq $type "1")}}checked{{end}}> Multi-vote
+    </div>
+    <div>
+        <input type='submit' value='Next'>
+    </div>
+</form>
+{{end}}

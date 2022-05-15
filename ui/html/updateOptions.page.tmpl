@@ -1,0 +1,31 @@
+{{template "base" .}}
+
+{{define "title"}} Update Pool Options{{end}}
+
+{{define "body"}}
+<form action='/pool/update_options/{{.Pool.ID}}' method='POST'>
+    {{range $item, $option := .Pool.PoolOptions}}
+        <div>
+        <label><b>Option {{$item}}:</b></label>
+            <div>
+                <label>Name:</label>
+                {{with $.Form.Errors.Get (printf "name[%d]" $item)}}
+                    <label class='error'>{{.}}</label>
+                {{end}}
+                <input type='text' name='name[{{$item}}]' value='{{$option.Option}}'>
+            </div>
+            <div>
+                <label>Description:</label>
+                {{with $.Form.Errors.Get (printf "description[%d]" $item)}}
+                    <label class='error'>{{.}}</label>
+                {{end}}
+                <input type='text' name='description[{{$item}}]' value='{{$option.Description}}'>
+            </div>
+        </div>
+    {{end}}
+   
+    <div>
+        <input type='submit' value='Save'>
+    </div>
+</form>
+{{end}}
