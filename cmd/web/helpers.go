@@ -52,6 +52,6 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf.WriteTo(w)
 }
 
-func (app *application) AuthenticatedUser(r *http.Request) int  {
+func (app *application) authenticatedUser(r *http.Request) int  {
 	return app.session.GetInt(r, "userID")
 }
