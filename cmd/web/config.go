@@ -21,5 +21,6 @@ type application struct {
 	config 	      *Config
 	session		  *sessions.Session
 	pools         *mysql.PoolModel
+	users		  *mysql.UserModel
 	templateCache map[string]*template.Template
 }

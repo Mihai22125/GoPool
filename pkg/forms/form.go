@@ -1,6 +1,7 @@
 package forms
 
 import (
+	"regexp"
 	"time"
 	"strconv"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"strings"
 	"net/url"
 )
+
+var EmailRX = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=? ^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 type Form struct {
 	url.Values
@@ -82,9 +85,31 @@ func (f *Form) ValidDate(field string, format string) {
 	}
 }
 
-
 // TODO: add method for validating time
+
+func (f* Form) MinLength(field string, d int) {
+	value := f.Get(field)
+	if value == "" {
+		return
+	}
+
+	if utf8.RuneCountInString(value) < d {
+		f.Errors.Add(field, fmt.Sprintf("This field is too short (minimum is %d characters)", d))
+	}
+}
+
+func (f *Form) MatchesPattern(field string, pattern *regexp.Regexp) {
+	value := f.Get(field)
+	if value == "" {
+		return
+	}
+
+	if !pattern.MatchString(value) {
+		f.Errors.Add(field, "This field is invalid")
+	}
+}
 
 func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
 }
+

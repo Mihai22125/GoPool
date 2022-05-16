@@ -48,6 +48,7 @@ func main() {
 		config:        cfg,
 		session:	   session,
 		pools:         &mysql.PoolModel{DB: db},
+		users:         &mysql.UserModel{DB: db},
 		templateCache: templateCache,
 	}
 
