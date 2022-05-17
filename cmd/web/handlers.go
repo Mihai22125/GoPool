@@ -12,16 +12,9 @@ import (
 
 
 func (app *application)home(w http.ResponseWriter, r *http.Request) {
+	user := app.authenticatedUser(r)
 
-	// userID, err := strconv.Atoi(r.URL.Query().Get("user_id"))
-	// if err != nil || userID < 1{
-	// 	app.clientError(w, http.StatusBadRequest)
-	// 	return
-	// }
-
-	userID := 1
-
-	pools, err := app.pools.GetAll(userID)
+	pools, err := app.pools.GetAll(user.ID)
 	if err != nil {
 		app.serveError(w, err)
 		return
@@ -84,7 +77,9 @@ func (app *application)createPool(w http.ResponseWriter, r *http.Request) {
 	
 	poolConfig := models.PoolConfig{SingleVote: singleVote, StartDate: startDate, EndDate: endDate}
 
-	pool := models.Pool{UserID: 1, Name: form.Get("name"), NumberOfOptions: int(nrOfOptions), PoolConfig: poolConfig}
+	user := app.authenticatedUser(r)
+
+	pool := models.Pool{UserID: user.ID, Name: form.Get("name"), NumberOfOptions: int(nrOfOptions), PoolConfig: poolConfig}
 
 	id, err := app.pools.Insert(pool)
 	if err != nil {
@@ -115,6 +110,12 @@ func (app *application) updatePoolForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user := app.authenticatedUser(r)
+	if pool.UserID != user.ID {
+		app.notFound(w)
+		return
+	}
+
 	app.render(w, r, "update.page.tmpl", &templateData{
 		Form: forms.New(nil),
 		Pool: pool,
@@ -134,6 +135,12 @@ func (app *application)updatePool(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if err != nil {
 		app.serveError(w, err)
+		return
+	}
+
+	user := app.authenticatedUser(r)
+	if pool.UserID != user.ID {
+		app.notFound(w)
 		return
 	}
 
@@ -210,6 +217,12 @@ func (app *application) updatePoolOptionsForm(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	user := app.authenticatedUser(r)
+	if pool.UserID != user.ID {
+		app.notFound(w)
+		return
+	}
+
 	app.render(w, r, "updateOptions.page.tmpl", &templateData{
 		Form: forms.New(nil),
 		Pool: pool,
@@ -236,6 +249,12 @@ func (app *application)updatePoolOptions(w http.ResponseWriter, r *http.Request)
 		return
 	} else if err != nil {
 		app.serveError(w, err)
+		return
+	}
+
+	user := app.authenticatedUser(r)
+	if pool.UserID != user.ID {
+		app.notFound(w)
 		return
 	}
 
@@ -279,6 +298,12 @@ func (app *application) showPool(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if err != nil {
 		app.serveError(w, err)
+		return
+	}
+
+	user := app.authenticatedUser(r)
+	if pool.UserID != user.ID {
+		app.notFound(w)
 		return
 	}
 
