@@ -7,7 +7,9 @@ import (
 
 	"log"
 )
+type contextKey string
 
+var contextKeyUser = contextKey("user")
 type Config struct {
 	Addr      string
 	StaticDir string
@@ -21,6 +23,6 @@ type application struct {
 	config 	      *Config
 	session		  *sessions.Session
 	pools         *mysql.PoolModel
-	users		  *mysql.UserModel
 	templateCache map[string]*template.Template
+	users		  *mysql.UserModel
 }

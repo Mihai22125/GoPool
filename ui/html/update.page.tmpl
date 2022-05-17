@@ -4,7 +4,7 @@
 
 {{define "body"}}
 <form action='/pool/update/{{.Pool.ID}}' method='POST'>
-    <input type="hidden" name="csfr_token" value="{{.CSFRToken}}">
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
     <div>
         <label>Name:</label>
         {{with .Form.Errors.Get "name"}}

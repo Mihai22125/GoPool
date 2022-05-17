@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/mihai22125/goPool/pkg/models"
 	"github.com/justinas/nosurf"
 	"time"
 	"bytes"
@@ -32,7 +33,7 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	td.AuthenticatedUser = app.authenticatedUser(r)
 	td.CurrentYear = time.Now().Year()
 	td.Flash = app.session.PopString(r, "flash")
-	td.CSFRToken = nosurf.Token(r)
+	td.CSRFToken = nosurf.Token(r)
 
 	return td
 }
@@ -54,6 +55,11 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf.WriteTo(w)
 }
 
-func (app *application) authenticatedUser(r *http.Request) int  {
-	return app.session.GetInt(r, "userID")
+func (app *application) authenticatedUser(r *http.Request) *models.User  {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	
+	return user
 }
