@@ -12,6 +12,7 @@ import (
 type templateData struct {
 	AuthenticatedUser int
 	CurrentYear       int
+	CSFRToken         string
 	Flash             string
 	Form              *forms.Form
 	Pool              *models.Pool

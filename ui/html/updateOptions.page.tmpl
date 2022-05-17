@@ -4,6 +4,7 @@
 
 {{define "body"}}
 <form action='/pool/update_options/{{.Pool.ID}}' method='POST'>
+    <input type="hidden" name="csfr_token" value="{{.CSFRToken}}">
     {{range $item, $option := .Pool.PoolOptions}}
         <div>
         <label><b>Option {{$item}}:</b></label>

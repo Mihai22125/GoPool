@@ -4,6 +4,7 @@
 
 {{define "body"}}
 <form action="/user/signup" method='POST' novalidate>
+    <input type="hidden" name="csfr_token" value="{{.CSFRToken}}">
     {{with .Form}}
     <div>
         <label>Name: </label>
