@@ -107,6 +107,16 @@ func (model *PoolModel) GetAll(userID int) ([]*models.Pool, error) {
 			return nil, err
 		}
 
+		pool.PoolOptions, err = model.GetOptions(*pool)
+		if err != nil {
+			return nil, err
+		}
+	
+		pool.PoolConfig, err = model.GetConfig(*pool)
+		if err != nil && err != models.ErrNoRecord {
+			return nil, err
+		}
+
 		pools = append(pools, pool)
 	}
 
@@ -222,10 +232,9 @@ func (model *PoolModel) UpdateOptions(pool models.Pool) (int, error) {
     return 0, nil
 }
 
-
 func (model *PoolModel) InsertConfig(pool models.Pool) (int, error) {
 	stmt := `INSERT INTO pool_config (pool_id, single_vote, start_date, end_date) VALUES (?, ?, ?, ?)`
-	result, err := model.DB.Exec(stmt, pool.ID, pool.PoolConfig.SingleVote, pool.PoolConfig.StartDate.Format("2006-01-02"), pool.PoolConfig.EndDate.Format("2006-01-02"))
+	result, err := model.DB.Exec(stmt, pool.ID, pool.PoolConfig.SingleVote, pool.PoolConfig.StartDate.UTC().Format("2006-01-02T15:04"), pool.PoolConfig.EndDate.UTC().Format("2006-01-02T15:04"))
 	if err != nil {
 		return 0, err
 	}
@@ -269,7 +278,7 @@ func (model *PoolModel) UpdateConfig(pool models.Pool) (int, error) {
 				   WHERE pool_id = ?`
 	
 
-	_, err := model.DB.Exec(updateStmt, pool.PoolConfig.SingleVote, pool.PoolConfig.StartDate.Format("2006-01-02"), pool.PoolConfig.EndDate.Format("2006-01-02"), pool.ID)
+	_, err := model.DB.Exec(updateStmt, pool.PoolConfig.SingleVote, pool.PoolConfig.StartDate.UTC().Format("2006-01-02T15:04"), pool.PoolConfig.EndDate.UTC().Format("2006-01-02T15:04"), pool.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -277,4 +286,16 @@ func (model *PoolModel) UpdateConfig(pool models.Pool) (int, error) {
     return 0, nil
 }
 
+func (model *PoolModel) GetOptionID(id int, optionText string) (int, error) {
+	stmt := `SELECT option_id FROM pool_option WHERE pool_id = ? AND name = ?`
+	var optionID int
 
+	err := model.DB.QueryRow(stmt, id, optionText).Scan(&optionID)
+	if err == sql.ErrNoRows {
+		return 0, models.ErrNoRecord
+	} else if err != nil {
+		return 0, err
+	}
+
+	return optionID, nil
+}

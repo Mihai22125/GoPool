@@ -1,0 +1,32 @@
+{{template "base" .}}
+
+{{define "title"}}Machines{{end}}
+
+{{define "body"}}
+    <h2>All machines</h2>
+    {{if .Machines}}
+    <table>
+        <tr>
+            <th>IP Address</th>
+            <th>phoneNumber</th>
+            <th>ID</th>
+            <th></th>
+        </tr>
+        {{range .Machines}}
+        <tr>
+            <td><a href='/machine/{{.ID}}'>{{.IPAdrres}}</a></td>
+            <td>{{.PhoneNumber}}</td>
+            <td>#{{.ID}}</td>
+            <td>   
+             <button><a href='/machine/update/{{.ID}}'>Update</a></button>
+             <form action="/machine/delete/{{.ID}}" method='POST'>
+                <input type="hidden" name='csrf_token' value='{{$.CSRFToken}}'>
+                <button style="color:red;">Delete</button>
+             </form>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing to see here yet!</p> 
+    {{end}}
+{{end}}

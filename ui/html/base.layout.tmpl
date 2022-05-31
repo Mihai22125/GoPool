@@ -5,6 +5,7 @@
       <meta charset='utf-8'>
       <title>{{template "title" .}} - GoPool</title>
       <link rel='stylesheet' href='/static/css/main.css'>
+      <link rel='stylesheet' href='/static/css/chart.css'>
       <link rel='shortcut icon' href='/static/img/favicon.ico' type='image/x-icon'>
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700'>
    </head>
@@ -17,6 +18,10 @@
             <a href='/'>Home</a>
             {{if .AuthenticatedUser}}
                <a href='/pool/create'>Create pool</a>
+               {{if eq .AuthenticatedUser.Role "admin"}}
+                  <a href="/machine/">Machines</a>
+                  <!-- <a href='/machine/create'>Add machine</a> -->
+               {{end}}
             {{end}}
          </div>
          <div>

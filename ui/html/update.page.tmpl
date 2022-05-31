@@ -12,13 +12,6 @@
         {{end}}
         <input type='text' name='name' value='{{ or (.Form.Get "name") .Pool.Name}}'>
     </div>
-        <div>
-        <label>number of options:</label>
-        {{with .Form.Errors.Get "OfOptions"}}
-            <label class='error'>{{.}}</label>
-        {{end}}
-        <input type='text' name='nrOfOptions' value='{{or (.Form.Get "nrOfOptions") .Pool.NumberOfOptions}}'>
-    </div>
     <div>
         <label>Start Date:</label>
         {{with .Form.Errors.Get "startDate"}}

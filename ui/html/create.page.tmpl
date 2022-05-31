@@ -24,21 +24,14 @@
         {{with .Form.Errors.Get "startDate"}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <input type='date' name='startDate' value='{{or (.Form.Get "startDate") .Pool.PoolConfig.StartDate}}'>
-    </div>
-    <div>
-        <label>Start Time:</label>
-        {{with .Form.Errors.Get "startTime"}}
-            <label class='error'>{{.}}</label>
-        {{end}}
-        <input type='time' name='startDate' value='{{or (.Form.Get "startTime") .Pool.PoolConfig.StartDate}}'>
+        <input type='datetime-local' name='startDate' value='{{or (.Form.Get "startDate") .Pool.PoolConfig.StartDate}}'>
     </div>
     <div>
         <label>End Date:</label>
         {{with .Form.Errors.Get "endDate"}}
             <label class='error'>{{.}}</label>
         {{end}}
-        <input type='date' name='endDate' value='{{or (.Form.Get "endDate") .Pool.PoolConfig.EndDate}}'>
+        <input type='datetime-local' name='endDate' value='{{or (.Form.Get "endDate") .Pool.PoolConfig.EndDate}}'>
     </div>
     <div>
         <label>Type:</label> 

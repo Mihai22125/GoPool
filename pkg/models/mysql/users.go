@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"fmt"
 	"strings"
 	"github.com/mihai22125/goPool/pkg/models"
 	"database/sql"
@@ -58,13 +59,18 @@ func (m *UserModel) Authenticate(email, password string) (int, error) {
 func (m *UserModel) Get(id int) (*models.User, error) {
 	s := &models.User{}
 
-	stmt := `SELECT user_id, name, email, created FROM users WHERE user_id = ?`
-	err := m.DB.QueryRow(stmt, id).Scan(&s.ID, &s.Name, &s.Email, &s.Created)
+	stmt := `SELECT user_id, name, email, created, ur.role_name
+			 FROM users
+			 	INNER JOIN user_role AS ur ON ur.role_id = users.role_id 
+			 WHERE user_id = ?`
+	err := m.DB.QueryRow(stmt, id).Scan(&s.ID, &s.Name, &s.Email, &s.Created, &s.Role)
 	if err == sql.ErrNoRows {
 		return nil, models.ErrNoRecord
 	} else if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("%+v\n", s)
 
 	return s, nil
 }

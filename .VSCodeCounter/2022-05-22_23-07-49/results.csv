@@ -1,0 +1,30 @@
+"filename", "language", "Go", "Go Module File", "Go Checksum File", "JavaScript", "CSS", "HTML", "comment", "blank", "total"
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/config.go", "Go", 27, 0, 0, 0, 0, 0, 0, 4, 31
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/handlers.go", "Go", 379, 0, 0, 0, 0, 0, 7, 90, 476
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/helpers.go", "Go", 51, 0, 0, 0, 0, 0, 0, 14, 65
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/main.go", "Go", 74, 0, 0, 0, 0, 0, 0, 16, 90
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/middleware.go", "Go", 73, 0, 0, 0, 0, 0, 0, 15, 88
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/routes.go", "Go", 28, 0, 0, 0, 0, 0, 0, 10, 38
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/cmd/web/templates.go", "Go", 57, 0, 0, 0, 0, 0, 3, 14, 74
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/go.mod", "Go Module File", 0, 11, 0, 0, 0, 0, 0, 3, 14
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/go.sum", "Go Checksum File", 0, 0, 18, 0, 0, 0, 0, 1, 19
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/forms/errors.go", "Go", 12, 0, 0, 0, 0, 0, 0, 4, 16
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/forms/form.go", "Go", 92, 0, 0, 0, 0, 0, 1, 23, 116
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/models/models.go", "Go", 59, 0, 0, 0, 0, 0, 1, 11, 71
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/models/mysql/machine.go", "Go", 90, 0, 0, 0, 0, 0, 3, 29, 122
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/models/mysql/pool.go", "Go", 220, 0, 0, 0, 0, 0, 9, 66, 295
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/models/mysql/session.go", "Go", 68, 0, 0, 0, 0, 0, 1, 23, 92
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/models/mysql/users.go", "Go", 57, 0, 0, 0, 0, 0, 0, 13, 70
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/pkg/models/mysql/vote.go", "Go", 34, 0, 0, 0, 0, 0, 16, 15, 65
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/base.layout.tmpl", "HTML", 0, 0, 0, 0, 0, 44, 0, 0, 44
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/create.page.tmpl", "HTML", 0, 0, 0, 0, 0, 47, 0, 2, 49
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/footer.partial.tmpl", "HTML", 0, 0, 0, 0, 0, 3, 0, 0, 3
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/home.page.tmpl", "HTML", 0, 0, 0, 0, 0, 23, 0, 2, 25
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/login.page.tmpl", "HTML", 0, 0, 0, 0, 0, 23, 0, 2, 25
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/show.page.tmpl", "HTML", 0, 0, 0, 0, 0, 30, 0, 3, 33
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/signup.page.tmpl", "HTML", 0, 0, 0, 0, 0, 33, 0, 2, 35
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/update.page.tmpl", "HTML", 0, 0, 0, 0, 0, 47, 0, 2, 49
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/html/updateOptions.page.tmpl", "HTML", 0, 0, 0, 0, 0, 29, 0, 3, 32
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/static/css/main.css", "CSS", 0, 0, 0, 0, 265, 0, 0, 50, 315
+"/Users/timbotamihai/go/github.com/mihai22125/goPool/ui/static/js/main.js", "JavaScript", 0, 0, 0, 8, 0, 0, 0, 0, 8
+"Total", "-", 1321, 11, 18, 8, 265, 279, 41, 417, 2360

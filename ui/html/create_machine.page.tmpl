@@ -1,0 +1,26 @@
+{{template "base" .}}
+
+{{define "title"}} Add a New Machine{{end}}
+
+{{define "body"}}
+<form action='/machine/create' method='POST'>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div>
+        <label>IP Address:</label>
+        {{with .Form.Errors.Get "ipAddress"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='ipAddress' value='{{.Form.Get "ipAddress"}}'>
+    </div>
+    <div>
+        <label>Phone number:</label>
+        {{with .Form.Errors.Get "phoneNumber"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='phoneNumber' value='{{.Form.Get "phoneNumber"}}'>
+    </div>
+    <div>
+        <input type='submit' value='Next'>
+    </div>
+</form>
+{{end}}

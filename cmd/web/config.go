@@ -11,7 +11,8 @@ type contextKey string
 
 var contextKeyUser = contextKey("user")
 type Config struct {
-	Addr      string
+	AddrHTTPS string
+	AddrHTTP  string
 	StaticDir string
 	Dsn		  string
 	Secret	  string
@@ -25,4 +26,7 @@ type application struct {
 	pools         *mysql.PoolModel
 	templateCache map[string]*template.Template
 	users		  *mysql.UserModel
+	machines      *mysql.MachineModel
+	sessions	  *mysql.SessionModel
+	votes		  *mysql.VoteModel
 }

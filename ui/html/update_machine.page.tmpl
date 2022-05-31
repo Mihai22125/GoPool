@@ -1,0 +1,26 @@
+{{template "base" .}}
+
+{{define "title"}} Update Machine{{end}}
+
+{{define "body"}}
+<form action='/machine/update/{{.Machine.ID}}' method='POST'>
+    <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div>
+        <label>IP Address:</label>
+        {{with .Form.Errors.Get "ipAddress"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='ipAddress' value='{{or (.Form.Get "ipAddress") .Machine.IPAdrres}}'>
+    </div>
+    <div>
+        <label>Phone number:</label>
+        {{with .Form.Errors.Get "phoneNumber"}}
+            <label class='error'>{{.}}</label>
+        {{end}}
+        <input type='text' name='phoneNumber' value='{{or (.Form.Get "phoneNumber") .Machine.PhoneNumber}}'>
+    </div>
+    <div>
+        <input type='submit' value='Next'>
+    </div>
+</form>
+{{end}}

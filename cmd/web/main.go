@@ -17,9 +17,11 @@ import (
 func main() {
 
 	cfg := new(Config)
-	flag.StringVar(&cfg.Addr, "addr", ":4000", "HTTP network address")
+	flag.StringVar(&cfg.AddrHTTPS, "addrHTTPS", ":4000", "HTTPS network address")
+	flag.StringVar(&cfg.AddrHTTP, "addrHTTP", ":8000", "HTTP network address")
+
 	flag.StringVar(&cfg.StaticDir, "static-dir", "./ui/static", "Path to static assets")
-	flag.StringVar(&cfg.Dsn, "dsn", "root:pass@/gopool?parseTime=true", "MySQL data source name")
+	flag.StringVar(&cfg.Dsn, "dsn", "root:pass@tcp(database:3306)/goPool?parseTime=true", "MySQL data source name")
 	flag.StringVar(&cfg.Secret, "secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@sf", "Secret key")
 	flag.Parse()
 
@@ -50,6 +52,9 @@ func main() {
 		session:	   session,
 		pools:         &mysql.PoolModel{DB: db},
 		users:         &mysql.UserModel{DB: db},
+		machines:      &mysql.MachineModel{DB: db},
+		sessions:      &mysql.SessionModel{DB: db},
+		votes:         &mysql.VoteModel{DB: db},
 		templateCache: templateCache,
 	}
 
@@ -59,7 +64,7 @@ func main() {
 	}
 
 	srv := &http.Server {
-		Addr:         cfg.Addr,
+		Addr:         cfg.AddrHTTPS,
 		ErrorLog:     errorLog,
 		Handler:      app.routes(),
 		TLSConfig:    tlsConfig,
@@ -68,9 +73,26 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	infoLog.Printf("Starting server on %s\n", cfg.Addr)
-	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	restSrv := &http.Server {
+		Addr:         cfg.AddrHTTP,
+		ErrorLog:     errorLog,
+		Handler:      app.restRoutes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	go func() {
+		infoLog.Printf("Starting server on %s\n", cfg.AddrHTTPS)
+		err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+		infoLog.Println("https: ", err)
+	}()
+
+	infoLog.Printf("Starting server on %s\n", cfg.AddrHTTP)
+	err = restSrv.ListenAndServe()
+	infoLog.Println("http: ", err)
 	errorLog.Fatal(err)
+	
 }
 
 func openDB(dsn string) (*sql.DB, error) {

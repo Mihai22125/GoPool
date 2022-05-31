@@ -1,0 +1,44 @@
+{{template "base" .}}
+
+{{define "title"}}Pool Results{{end}}
+
+{{define "body"}}
+    <div class='snippet'>
+        <div class='metadata'>
+            <strong>{{.Pool.Name}}</strong>
+            <span>#{{.Pool.ID}}</span>
+        </div>
+        <div class="chart-wrap vertical">
+            <h2 class="title">{{.Pool.Name}} Pool Results</h2>
+            
+            <div class="grid">
+                {{range .Results}}
+                <div class="bar" style="--bar-value:{{.Percentage}}%;" data-name="{{.Option.Description}}" title="{{.Option.Description}}"></div>
+                {{else}}
+                    <p>There's nothing to see here yet!</p> 
+                {{end}}
+                {{if .Results}}
+            </div>
+        </div>
+    </div>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Code</th>
+            <th>Percentage</th>
+            <th>Count</th>
+        </tr>
+        {{range .Results}}
+        <tr>
+            <td>{{.Option.Description}}</td>
+            <td>{{.Option.Option}}</td>
+            <td>{{.Percentage}}%</td>
+            <td>{{.Count}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+        <p>There's nothing to see here yet!</p> 
+    {{end}}
+    
+{{end}}

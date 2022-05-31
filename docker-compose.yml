@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/app.dockerfile
+    ports:
+      - 4000:4000
+      - 8000:8000
+    volumes:
+      - .:/GoPool
+    depends_on:
+      - database
+    container_name: GoPool-web
+    environment:
+      - 'DB_PORT=3306'
+      - 'DB_HOST=database'
+    
+  
+  database:
+    image: mysql:8.0.27
+    # command: createdb --username=root --owner=root GoPool
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_USER: root2
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: goPool
+    container_name: GoPool-db
+    ports:
+      - 3306:3306
+    volumes:
+      - GoPool-data:/var/lib/mysql
+
+volumes:
+  GoPool-data:

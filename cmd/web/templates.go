@@ -17,6 +17,9 @@ type templateData struct {
 	Form              *forms.Form
 	Pool              *models.Pool
 	Pools             []*models.Pool
+	Machines          []*models.Machine
+	Machine           *models.Machine
+	Results			  []*models.Result
 }
 
 func humanDate(t time.Time) string {
@@ -35,6 +38,7 @@ func intRange(start, end int) []int {
 var functions = template.FuncMap {
 	"humanDate": humanDate,
 	"intRange": intRange,
+	"currentTime": time.Now().UTC,
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {

@@ -64,7 +64,6 @@ func noSurf(next http.Handler) http.Handler {
 
 func (app *application) authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.errorLog.Println("authenticate(): Got here")
 		exists := app.session.Exists(r, "userID")
 		if !exists {
 			next.ServeHTTP(w, r)
@@ -84,5 +83,18 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), contextKeyUser, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (app *application) adminUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	user := app.authenticatedUser(r)
+	if user == nil || user.Role != models.RoleAdmin {
+		app.clientError(w, http.StatusUnauthorized)
+		return
+	}
+
+	next.ServeHTTP(w, r)
 	})
 }

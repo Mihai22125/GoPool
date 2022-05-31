@@ -17,14 +17,18 @@
         {{end}}
         </code>
         <div class='metadata'>
-        <p>{{.PoolConfig.StartDate}}</p>
             <time>Start date: {{humanDate .PoolConfig.StartDate}}</time>
             <time>End date: {{humanDate .PoolConfig.EndDate}}</time>
         </div>
     </div>
+
     <nav>
-         <a href='/pool/update/{{.ID}}'>Update Pool</a>
-         <a href='/pool/update_options/{{.ID}}'>Update options</a>
+        {{if .PoolConfig.StartDate.Before currentTime}}
+            <a href='/pool/update/{{.ID}}'>Update Pool</a>
+            <a href='/pool/update_options/{{.ID}}'>Update options</a>
+        {{else}}
+            <a href='/pool/results/{{.ID}}'>&nbsp;See results</a>
+        {{end}}
       </nav>
     {{end}}
 {{end}}
