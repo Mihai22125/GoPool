@@ -1,20 +1,21 @@
 package main
 
 import (
-	"sort"
-	"net"
 	"encoding/json"
+	"net"
+	"sort"
 	"time"
 
-	"github.com/mihai22125/goPool/pkg/models"
-	"github.com/mihai22125/goPool/pkg/forms"
 	"fmt"
-	"strconv"
 	"net/http"
+	"strconv"
+
+	"github.com/mihai22125/goPool/pkg/forms"
+	"github.com/mihai22125/goPool/pkg/models"
 )
 
 //TODO: add default page for not authenticated users
-func (app *application)home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	user := app.authenticatedUser(r)
 	var userID int
 
@@ -43,8 +44,7 @@ func (app *application) createPoolForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
-func (app *application)createPool(w http.ResponseWriter, r *http.Request) {
+func (app *application) createPool(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -74,7 +74,6 @@ func (app *application)createPool(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("startDate", "This field is invalid")
 	}
 	fmt.Println("startDate: ", startDate)
-
 
 	if time.Now().After(startDate) {
 		form.Errors.Add("startDate", "Start Date must be in future")
@@ -116,7 +115,7 @@ func (app *application)createPool(w http.ResponseWriter, r *http.Request) {
 		app.render(w, r, "create.page.tmpl", &templateData{Form: form, Pool: &models.Pool{}})
 		return
 	}
-	
+
 	poolConfig := models.PoolConfig{SingleVote: singleVote, StartDate: startDate, EndDate: endDate}
 
 	user := app.authenticatedUser(r)
@@ -130,7 +129,7 @@ func (app *application)createPool(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    _, err = app.sessions.Insert(id, machineID)
+	_, err = app.sessions.Insert(id, machineID)
 	if err != nil {
 		app.serveError(w, err)
 		return
@@ -142,10 +141,9 @@ func (app *application)createPool(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/pool/update_options/%d", id), http.StatusSeeOther)
 }
 
-
 func (app *application) updatePoolForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -171,9 +169,9 @@ func (app *application) updatePoolForm(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *application)updatePool(w http.ResponseWriter, r *http.Request) {
+func (app *application) updatePool(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -234,7 +232,7 @@ func (app *application)updatePool(w http.ResponseWriter, r *http.Request) {
 
 	poolConfig := models.PoolConfig{PoolID: pool.ID, SingleVote: singleVote, StartDate: startDate, EndDate: endDate}
 	pool.PoolConfig = poolConfig
-	
+
 	pool.Name = form.Get("name")
 
 	_, err = app.pools.Update(pool)
@@ -249,7 +247,7 @@ func (app *application)updatePool(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) updatePoolOptionsForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -275,10 +273,9 @@ func (app *application) updatePoolOptionsForm(w http.ResponseWriter, r *http.Req
 	})
 }
 
-
-func (app *application)updatePoolOptions(w http.ResponseWriter, r *http.Request) {
+func (app *application) updatePoolOptions(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -333,7 +330,7 @@ func (app *application)updatePoolOptions(w http.ResponseWriter, r *http.Request)
 
 func (app *application) showPool(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -354,15 +351,15 @@ func (app *application) showPool(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.render(w, r, "show.page.tmpl", &templateData{
-		Pool:  pool,
+		Pool: pool,
 	})
 }
 
 func (app *application) showPoolResults(w http.ResponseWriter, r *http.Request) {
 	var results []*models.Result
-	
+
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -399,10 +396,9 @@ func (app *application) showPoolResults(w http.ResponseWriter, r *http.Request) 
 	sort.Slice(results, func(i, j int) bool {
 		return results[i].Count > results[j].Count
 	})
-	
 
 	app.render(w, r, "show_pool_results.page.tmpl", &templateData{
-		Pool:  pool,
+		Pool:    pool,
 		Results: results,
 	})
 }
@@ -480,69 +476,80 @@ func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-
-func (app *application)createVote(w http.ResponseWriter, r *http.Request) {
+func (app *application) createVote(w http.ResponseWriter, r *http.Request) {
 	var voteRequest models.VoteRequest
 
 	err := json.NewDecoder(r.Body).Decode(&voteRequest)
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
+		app.errorLog.Println(err)
 		return
 	}
 
-	fmt.Printf("%+v\n", voteRequest)
-	 
+	app.infoLog.Printf("%+v\n", voteRequest)
+
 	machine, err := app.machines.Get(voteRequest.MachineID)
 	if err != nil {
 		app.serveError(w, err)
+		app.errorLog.Println(err)
 		return
 	}
 
-	fmt.Printf("machine: %+v\n", machine)
+	app.infoLog.Printf("machine: %+v\n", machine)
 
 	clientHost, _, err := net.SplitHostPort(r.RemoteAddr)
-	if clientHost != machine.IPAdrres {
-		app.clientError(w, http.StatusBadRequest)
+	if err != nil {
+		app.serveError(w, err)
+		app.errorLog.Println(err)
 		return
 	}
+	// if clientHost != machine.IPAdrres {
+	// 	app.clientError(w, http.StatusBadRequest)
+	// 	app.errorLog.Println(err)
+	// 	return
+	// }
 
-	fmt.Printf("clienthost: %v", clientHost)
+	app.infoLog.Printf("clienthost: %v", clientHost)
 
 	session, err := app.sessions.GetCurrentForMachine(machine.ID)
 	if err == models.ErrNoRecord {
 		app.clientError(w, http.StatusBadRequest)
-		return
-	} else if err != nil{
-		app.serveError(w, err)
-		return
-	}
-	fmt.Printf("session: %+v\n", session)
-	
-
-	optionID, err := app.pools.GetOptionID(session.PoolID, voteRequest.Text)
-	fmt.Printf("option id: %v\n", optionID)
-	if err == models.ErrNoRecord {
-		app.clientError(w, http.StatusBadRequest)
+		app.errorLog.Println(err)
 		return
 	} else if err != nil {
 		app.serveError(w, err)
+		app.errorLog.Println(err)
+		return
+	}
+	app.infoLog.Printf("session: %+v\n", session)
+
+	optionID, err := app.pools.GetOptionID(session.PoolID, voteRequest.Text)
+	app.infoLog.Printf("option id: %v\n", optionID)
+	if err == models.ErrNoRecord {
+		app.clientError(w, http.StatusBadRequest)
+		app.errorLog.Println(err)
+		return
+	} else if err != nil {
+		app.serveError(w, err)
+		app.errorLog.Println(err)
 		return
 	}
 
 	_, err = app.votes.Insert(session.PoolID, optionID, machine.ID, voteRequest.From)
 	if err != nil {
 		app.serveError(w, err)
+		app.errorLog.Println(err)
 		return
 	}
 }
 
-func (app *application)createMachineForm(w http.ResponseWriter, r *http.Request) {
+func (app *application) createMachineForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "create_machine.page.tmpl", &templateData{
 		Form: forms.New(nil),
 	})
 }
 
-func (app *application)createMachine(w http.ResponseWriter, r *http.Request) {
+func (app *application) createMachine(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		app.clientError(w, http.StatusBadRequest)
@@ -559,7 +566,6 @@ func (app *application)createMachine(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	machine := models.Machine{IPAdrres: form.Get("ipAddress"), PhoneNumber: form.Get("phoneNumber")}
 
 	//TODO: make transaction at inserting pool - session
@@ -575,10 +581,10 @@ func (app *application)createMachine(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)
 }
 
-func (app *application)showMachine(w http.ResponseWriter, r *http.Request) {
+func (app *application) showMachine(w http.ResponseWriter, r *http.Request) {
 }
 
-func (app *application)showMachines(w http.ResponseWriter, r *http.Request) {
+func (app *application) showMachines(w http.ResponseWriter, r *http.Request) {
 	machines, err := app.machines.GetAll()
 	if err != nil {
 		app.errorLog.Println(err)
@@ -591,10 +597,9 @@ func (app *application)showMachines(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
 func (app *application) updateMachineForm(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -609,14 +614,14 @@ func (app *application) updateMachineForm(w http.ResponseWriter, r *http.Request
 	}
 
 	app.render(w, r, "update_machine.page.tmpl", &templateData{
-		Form: forms.New(nil),
+		Form:    forms.New(nil),
 		Machine: machine,
 	})
 }
 
-func (app *application)updateMachine(w http.ResponseWriter, r *http.Request) {
+func (app *application) updateMachine(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -647,7 +652,7 @@ func (app *application)updateMachine(w http.ResponseWriter, r *http.Request) {
 	}
 
 	machine.IPAdrres = form.Get("ipAddress")
-	machine.PhoneNumber =form.Get("phoneNumber")
+	machine.PhoneNumber = form.Get("phoneNumber")
 
 	_, err = app.machines.Update(machine)
 	if err != nil {
@@ -663,7 +668,7 @@ func (app *application)updateMachine(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) deleteMachine(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1{
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -678,7 +683,6 @@ func (app *application) deleteMachine(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.session.Put(r, "flash", "Machine succesfully deleted!")
-
 
 	http.Redirect(w, r, fmt.Sprintf("/machine"), http.StatusSeeOther)
 }

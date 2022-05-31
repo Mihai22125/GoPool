@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	ErrNoRecord = errors.New("models: no matching record found")
+	ErrNoRecord           = errors.New("models: no matching record found")
 	ErrInvalidCredentials = errors.New("models: invalid credentials")
-	ErrDuplicateEmail = errors.New("models: duplicate email")
+	ErrDuplicateEmail     = errors.New("models: duplicate email")
 
 	RoleAdmin = "admin"
 	RoleBasic = "basic"
@@ -18,7 +18,7 @@ var (
 
 type Pool struct {
 	ID              int
-	UserID	        int
+	UserID          int
 	Name            string
 	NumberOfOptions int
 	PoolConfig      PoolConfig
@@ -44,15 +44,15 @@ type User struct {
 	ID             int
 	Name           string
 	Email          string
-	Role 		   string
+	Role           string
 	HashedPassword []byte
 	Created        time.Time
 }
 
 type Machine struct {
-	ID           int
-	PhoneNumber  string
-	IPAdrres     string
+	ID          int
+	PhoneNumber string
+	IPAdrres    string
 }
 
 type Session struct {
@@ -70,9 +70,10 @@ type Vote struct {
 }
 
 type VoteRequest struct {
-	MachineID int     `json:"machine_id"`
-	Text 	  string  `json:"text"`
-	From 	  string  `json:"from"`
+	MachineID int    `json:"machine_id"`
+	Text      string `json:"text"`
+	From      string `json:"from"`
+	DateTime  string `json:"date_time"`
 }
 
 type Result struct {
