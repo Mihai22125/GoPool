@@ -1,12 +1,12 @@
 package main
 
 import (
-	"time"
-	"path/filepath"
 	"html/template"
-	"github.com/mihai22125/goPool/pkg/models"
-	"github.com/mihai22125/goPool/pkg/forms"
+	"path/filepath"
+	"time"
 
+	"github.com/mihai22125/goPool/pkg/forms"
+	"github.com/mihai22125/goPool/pkg/models"
 )
 
 type templateData struct {
@@ -19,7 +19,7 @@ type templateData struct {
 	Pools             []*models.Pool
 	Machines          []*models.Machine
 	Machine           *models.Machine
-	Results			  []*models.Result
+	Results           []*models.Result
 }
 
 func humanDate(t time.Time) string {
@@ -35,9 +35,9 @@ func intRange(start, end int) []int {
 	return result
 }
 
-var functions = template.FuncMap {
-	"humanDate": humanDate,
-	"intRange": intRange,
+var functions = template.FuncMap{
+	"humanDate":   humanDate,
+	"intRange":    intRange,
 	"currentTime": time.Now().UTC,
 }
 

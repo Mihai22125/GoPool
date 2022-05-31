@@ -75,7 +75,7 @@ func (app *application) createPool(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("startDate: ", startDate)
 
-	if time.Now().After(startDate) {
+	if time.Now().UTC().After(startDate) {
 		form.Errors.Add("startDate", "Start Date must be in future")
 	}
 
@@ -84,7 +84,7 @@ func (app *application) createPool(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("endDate", "This field is invalid")
 	}
 
-	if time.Now().After(endDate) {
+	if time.Now().UTC().After(endDate) {
 		form.Errors.Add("endDate", "End Date must be in future")
 	}
 
@@ -185,7 +185,7 @@ func (app *application) updatePool(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if time.Now().After(pool.PoolConfig.StartDate) {
+	if time.Now().UTC().After(pool.PoolConfig.StartDate) {
 		return
 	}
 
