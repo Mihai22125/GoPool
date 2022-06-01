@@ -39,7 +39,7 @@ func intRange(start, end int) []int {
 var functions = template.FuncMap{
 	"humanDate":   humanDate,
 	"intRange":    intRange,
-	"currentTime": time.Now().UTC,
+	"currentTime": time.Now,
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
