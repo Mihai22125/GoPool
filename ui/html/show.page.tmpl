@@ -3,32 +3,32 @@
 {{define "title"}}Pool #{{.Pool.ID}}{{end}}
 
 {{define "body"}}
-    {{with .Pool}}
-    <div class='snippet'>
-        <div class='metadata'>
-            <strong>{{.Name}}</strong>
-            <span>#{{.ID}}</span>
-        </div>
-        <code>
-        {{range $item, $option := .PoolOptions}}
-            <p><b>option {{$item}}</b></p>
-            <p>&emsp; text: {{$option.Option}}</p>
-            <p>&emsp; description: {{$option.Description}}</p>
-        {{end}}
-        </code>
-        <div class='metadata'>
-            <time>Start date: {{humanDate .PoolConfig.StartDate}}</time>
-            <time>End date: {{humanDate .PoolConfig.EndDate}}</time>
-        </div>
-    </div>
+{{with .Pool}}
+<div class='snippet'>
+	<div class='metadata'>
+		<strong>{{.Name}}</strong>
+		<span>#{{.ID}}</span>
+	</div>
+	<code>
+		{{range $item, $option := .PoolOptions}}
+		<p><b>option {{$item}}</b></p>
+		<p>&emsp; text: {{$option.Option}}</p>
+		<p>&emsp; description: {{$option.Description}}</p>
+		{{end}}
+	</code>
+	<div class='metadata'>
+		<time>Start date: {{humanDate .PoolConfig.StartDate}}</time>
+		<time>End date: {{humanDate .PoolConfig.EndDate}}</time>
+	</div>
+</div>
 
-    <nav>
-        {{if .PoolConfig.StartDate.Before currentTime}}
-            <a href='/pool/update/{{.ID}}'>Update Pool</a>
-            <a href='/pool/update_options/{{.ID}}'>Update options</a>
-        {{else}}
-            <a href='/pool/results/{{.ID}}'>&nbsp;See results</a>
-        {{end}}
-      </nav>
-    {{end}}
+<nav>
+	{{if .PoolConfig.StartDate.After currentTime}}
+	<a href='/pool/update/{{.ID}}'>Update Pool</a>
+	<a href='/pool/update_options/{{.ID}}'>Update options</a>
+	{{else}}
+		<a href='/pool/results/{{.ID}}'>&nbsp;See results</a>
+		{{end}}
+</nav>
+{{end}}
 {{end}}

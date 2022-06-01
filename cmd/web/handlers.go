@@ -108,6 +108,9 @@ func (app *application) createPool(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//TODO:
+	machineID = 3
+
 	if machineID == 0 {
 		form.Errors.Add("startDate", "this period is unavailable")
 	}
