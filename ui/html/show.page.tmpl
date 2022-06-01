@@ -23,7 +23,7 @@
 </div>
 
 <nav>
-	{{if .PoolConfig.StartDate.After currentTime}}
+	{{if .PoolConfig.StartDate.Before currentTime}}
 	<a href='/pool/update/{{.ID}}'>Update Pool</a>
 	<a href='/pool/update_options/{{.ID}}'>Update options</a>
 	{{else}}
