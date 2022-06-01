@@ -70,16 +70,17 @@ func (app *application) createPool(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("startDateString: ", form.Get("startDate"))
-	if startDate, err = time.Parse("2006-01-02T15:04", form.Get("startDate")); err != nil {
+	if startDate, err = time.ParseInLocation("2006-01-02T15:04", form.Get("startDate"), app.location); err != nil {
 		form.Errors.Add("startDate", "This field is invalid")
 	}
+
 	fmt.Println("startDate: ", startDate)
 
 	if time.Now().UTC().After(startDate) {
 		form.Errors.Add("startDate", "Start Date must be in future")
 	}
 
-	if endDate, err = time.Parse("2006-01-02T15:04", form.Get("endDate")); err != nil {
+	if endDate, err = time.ParseInLocation("2006-01-02T15:04", form.Get("endDate"), app.location); err != nil {
 		app.errorLog.Println(err)
 		form.Errors.Add("endDate", "This field is invalid")
 	}
@@ -212,11 +213,11 @@ func (app *application) updatePool(w http.ResponseWriter, r *http.Request) {
 	// TODO: rename to single-multiple
 	form.PermittedValues("type", "0", "1")
 
-	if startDate, err = time.Parse("2006-01-02", form.Get("startDate")); err != nil {
+	if startDate, err = time.ParseInLocation("2006-01-02", form.Get("startDate"), app.location); err != nil {
 		form.Errors.Add("startDate", "This field is invalid")
 	}
 
-	if endDate, err = time.Parse("2006-01-02T15:04", form.Get("endDate")); err != nil {
+	if endDate, err = time.ParseInLocation("2006-01-02T15:04", form.Get("endDate"), app.location); err != nil {
 		app.errorLog.Println(err)
 		form.Errors.Add("endDate", "This field is invalid")
 	}

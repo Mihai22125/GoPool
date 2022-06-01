@@ -2,14 +2,15 @@ package main
 
 import (
 	"crypto/tls"
-	"time"
-	"github.com/golangcollege/sessions"
-	"github.com/mihai22125/goPool/pkg/models/mysql"
 	"database/sql"
-	"os"
 	"flag"
 	"log"
 	"net/http"
+	"os"
+	"time"
+
+	"github.com/golangcollege/sessions"
+	"github.com/mihai22125/goPool/pkg/models/mysql"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -45,17 +46,20 @@ func main() {
 	session.Secure = true
 	session.SameSite = http.SameSiteStrictMode
 
+	loc, _ := time.LoadLocation("Europe/Bucharest")
+
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		config:        cfg,
-		session:	   session,
+		session:       session,
 		pools:         &mysql.PoolModel{DB: db},
 		users:         &mysql.UserModel{DB: db},
 		machines:      &mysql.MachineModel{DB: db},
 		sessions:      &mysql.SessionModel{DB: db},
 		votes:         &mysql.VoteModel{DB: db},
 		templateCache: templateCache,
+		location:      loc,
 	}
 
 	tlsConfig := &tls.Config{
@@ -63,7 +67,7 @@ func main() {
 		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
 	}
 
-	srv := &http.Server {
+	srv := &http.Server{
 		Addr:         cfg.AddrHTTPS,
 		ErrorLog:     errorLog,
 		Handler:      app.routes(),
@@ -73,7 +77,7 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	restSrv := &http.Server {
+	restSrv := &http.Server{
 		Addr:         cfg.AddrHTTP,
 		ErrorLog:     errorLog,
 		Handler:      app.restRoutes(),
@@ -92,7 +96,7 @@ func main() {
 	err = restSrv.ListenAndServe()
 	infoLog.Println("http: ", err)
 	errorLog.Fatal(err)
-	
+
 }
 
 func openDB(dsn string) (*sql.DB, error) {

@@ -23,7 +23,8 @@ type templateData struct {
 }
 
 func humanDate(t time.Time) string {
-	return t.Format("02 Jan 2006 15:04:05")
+	loc, _ := time.LoadLocation("Europe/Bucharest")
+	return t.In(loc).Format("02 Jan 2006 15:04:05")
 }
 
 func intRange(start, end int) []int {

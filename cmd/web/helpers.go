@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/mihai22125/goPool/pkg/models"
-	"github.com/justinas/nosurf"
-	"time"
 	"bytes"
-	"runtime/debug"
 	"fmt"
 	"net/http"
+	"runtime/debug"
+	"time"
+
+	"github.com/justinas/nosurf"
+	"github.com/mihai22125/goPool/pkg/models"
 )
 
 func (app *application) serveError(w http.ResponseWriter, err error) {
-	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack()) 
+	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
 	app.errorLog.Output(2, trace)
 
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -55,11 +56,11 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf.WriteTo(w)
 }
 
-func (app *application) authenticatedUser(r *http.Request) *models.User  {
+func (app *application) authenticatedUser(r *http.Request) *models.User {
 	user, ok := r.Context().Value(contextKeyUser).(*models.User)
 	if !ok {
 		return nil
 	}
-	
+
 	return user
 }
