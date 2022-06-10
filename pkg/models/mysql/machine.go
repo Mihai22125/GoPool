@@ -1,10 +1,11 @@
 package mysql
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
+
 	"github.com/mihai22125/goPool/pkg/models"
-	"database/sql"
 )
 
 // Define a PoolModel type which wraps a sql.DB connection pool
@@ -14,26 +15,26 @@ type MachineModel struct {
 
 // Insert will insert a new pool int the database
 func (model *MachineModel) Insert(machine models.Machine) (int, error) {
-	stmt := `INSERT INTO machine (phone_number, ip_address) VALUES (?, ?)`
-	result, err := model.DB.Exec(stmt, machine.PhoneNumber, machine.IPAdrres)
+	stmt := `INSERT INTO machine (phone_number, ip_address, active) VALUES (?, ?, ?)`
+	result, err := model.DB.Exec(stmt, machine.PhoneNumber, machine.IPAdrres, machine.Active)
 	if err != nil {
 		return 0, err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, 
-		err
+		return 0,
+			err
 	}
 
 	return int(id), nil
 }
 
 func (model *MachineModel) Get(id int) (*models.Machine, error) {
-	stmt := `SELECT machine_id, phone_number, ip_address FROM machine WHERE machine_id = ?`
+	stmt := `SELECT machine_id, phone_number, ip_address, active FROM machine WHERE machine_id = ? AND active = true`
 	machine := &models.Machine{}
 
-	err := model.DB.QueryRow(stmt, id).Scan(&machine.ID, &machine.PhoneNumber, &machine.IPAdrres)
+	err := model.DB.QueryRow(stmt, id).Scan(&machine.ID, &machine.PhoneNumber, &machine.IPAdrres, &machine.Active)
 	if err == sql.ErrNoRows {
 		return nil, models.ErrNoRecord
 	} else if err != nil {
@@ -56,7 +57,7 @@ func (model *MachineModel) Update(machine *models.Machine) (int, error) {
 }
 
 func (model *MachineModel) Delete(id int) (int, error) {
-	stmt := `DELETE FROM machine WHERE machine_id = ?`
+	stmt := `UPDATE machine SET active = false WHERE machine_id = ?`
 
 	_, err := model.DB.Exec(stmt, id)
 	if err != nil {
@@ -67,7 +68,7 @@ func (model *MachineModel) Delete(id int) (int, error) {
 }
 
 func (model *MachineModel) GetAll() ([]*models.Machine, error) {
-	stmt := `SELECT machine_id, phone_number, ip_address FROM machine`
+	stmt := `SELECT machine_id, phone_number, ip_address FROM machine where active = true`
 
 	rows, err := model.DB.Query(stmt)
 	if err != nil {
@@ -75,12 +76,12 @@ func (model *MachineModel) GetAll() ([]*models.Machine, error) {
 	}
 
 	defer rows.Close()
-	
+
 	machines := []*models.Machine{}
 
 	for rows.Next() {
 		machine := &models.Machine{}
-	
+
 		err = rows.Scan(&machine.ID, &machine.PhoneNumber, &machine.IPAdrres)
 		if err != nil {
 			return nil, err
@@ -101,9 +102,10 @@ func (model *MachineModel) GetNextAvailable(start, end time.Time) (int, error) {
 			 	m.machine_id, 
 			    SUM(? <= pc.end_date AND ? >= pc.start_date) AS overlap_count
 			 FROM machine as m
-			 	INNER JOIN session as s ON s.machine_id = m.machine_id
-			 	INNER JOIN pools as p ON p.pool_id = s.pool_id
-				INNER JOIN pool_config as pc on pc.pool_id = p.pool_id
+			 	LEFT JOIN session as s ON s.machine_id = m.machine_id
+			 	LEFT JOIN pools as p ON p.pool_id = s.pool_id
+				LEFT JOIN pool_config as pc on pc.pool_id = p.pool_id
+			 WHERE m.active = true
 			 GROUP BY m.machine_id`
 
 	rows, err := model.DB.Query(stmt, start, end)
@@ -112,48 +114,49 @@ func (model *MachineModel) GetNextAvailable(start, end time.Time) (int, error) {
 	}
 
 	defer rows.Close()
-	
+
 	for rows.Next() {
-		var machineID, count int
-		fmt.Printf("%v  -- %v\n", machineID, count)
-	
+		var machineID int
+		var count sql.NullInt32
+
 		err = rows.Scan(&machineID, &count)
+		fmt.Printf("%v  -- %v\n", machineID, count)
 		if err != nil {
 			return 0, err
 		}
 
-		if count == 0 {
+		if (count.Valid && count.Int32 == 0) || !count.Valid {
 			return machineID, nil
 		}
 	}
 
-// 	stmt := `SELECT 
-// 	m.machine_id, 
-//    pc.start_date,
-//    pc.end_date,
-//    (? <= pc.end_date) as now_before_end,
-//    (? >= pc.start_date) as end_after_start
-// FROM machine as m
-// 	INNER JOIN session as s ON s.machine_id = m.machine_id
-// 	INNER JOIN pools as p ON p.pool_id = s.pool_id
-//    INNER JOIN pool_config as pc on pc.pool_id = p.pool_id
-// `
+	// 	stmt := `SELECT
+	// 	m.machine_id,
+	//    pc.start_date,
+	//    pc.end_date,
+	//    (? <= pc.end_date) as now_before_end,
+	//    (? >= pc.start_date) as end_after_start
+	// FROM machine as m
+	// 	INNER JOIN session as s ON s.machine_id = m.machine_id
+	// 	INNER JOIN pools as p ON p.pool_id = s.pool_id
+	//    INNER JOIN pool_config as pc on pc.pool_id = p.pool_id
+	// `
 
-// 	rows, err := model.DB.Query(stmt, start, end)
-// 	if err != nil {
-// 		return 0, err
-// 	}
+	// 	rows, err := model.DB.Query(stmt, start, end)
+	// 	if err != nil {
+	// 		return 0, err
+	// 	}
 
-// 	defer rows.Close() 
+	// 	defer rows.Close()
 
-// 	for rows.Next() {
-// 		var machineID int
-// 		var startDate, endDate time.Time
-// 		var start1_before_end, end1_after_start bool
-	
-// 		_= rows.Scan(&machineID, &startDate, &endDate, &start1_before_end, &end1_after_start)
-// 		fmt.Printf("%d: %v -- %v -- %v -- %v\n", machineID, startDate, endDate, start1_before_end, end1_after_start)
-// 	}
+	// 	for rows.Next() {
+	// 		var machineID int
+	// 		var startDate, endDate time.Time
+	// 		var start1_before_end, end1_after_start bool
+
+	// 		_= rows.Scan(&machineID, &startDate, &endDate, &start1_before_end, &end1_after_start)
+	// 		fmt.Printf("%d: %v -- %v -- %v -- %v\n", machineID, startDate, endDate, start1_before_end, end1_after_start)
+	// 	}
 
 	if err = rows.Err(); err != nil {
 		return 0, err

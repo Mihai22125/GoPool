@@ -33,5 +33,6 @@ type application struct {
 	machines      *mysql.MachineModel
 	sessions      *mysql.SessionModel
 	votes         *mysql.VoteModel
+	apiKeys       *mysql.ApiKeyModel
 	location      *time.Location
 }

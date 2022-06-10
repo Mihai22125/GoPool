@@ -10,8 +10,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"crypto/sha1"
+
 	"github.com/mihai22125/goPool/pkg/forms"
 	"github.com/mihai22125/goPool/pkg/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 //TODO: add default page for not authenticated users
@@ -107,9 +110,6 @@ func (app *application) createPool(w http.ResponseWriter, r *http.Request) {
 		app.serveError(w, err)
 		return
 	}
-
-	//TODO:
-	machineID = 3
 
 	if machineID == 0 {
 		form.Errors.Add("startDate", "this period is unavailable")
@@ -380,11 +380,20 @@ func (app *application) showPoolResults(w http.ResponseWriter, r *http.Request) 
 	var total int
 
 	for _, option := range pool.PoolOptions {
-		count, err := app.votes.CountByOptionID(pool.ID, option.ID)
+		var count int
+		var err error
+
+		if pool.PoolConfig.SingleVote {
+			count, err = app.votes.CountByOptionIDDistinct(pool.ID, option.ID)
+		} else {
+			count, err = app.votes.CountByOptionID(pool.ID, option.ID)
+		}
+
 		if err != nil {
 			app.serveError(w, err)
 			return
 		}
+
 		results = append(results, &models.Result{Option: option, Count: count})
 		total += count
 	}
@@ -507,12 +516,15 @@ func (app *application) createVote(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Println(err)
 		return
 	}
-	// if clientHost != machine.IPAdrres {
-	// 	app.clientError(w, http.StatusBadRequest)
-	// 	app.errorLog.Println(err)
-	// 	return
-	// }
 
+	app.apiKeys.ValidateKey(voteRequest.MachineID, voteRequest.Key)
+	if err == models.ErrInvalidCredentials {
+		app.clientError(w, http.StatusForbidden)
+		return
+	} else if err != nil {
+		app.serveError(w, err)
+		return
+	}
 	app.infoLog.Printf("clienthost: %v", clientHost)
 
 	session, err := app.sessions.GetCurrentForMachine(machine.ID)
@@ -539,7 +551,9 @@ func (app *application) createVote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = app.votes.Insert(session.PoolID, optionID, machine.ID, voteRequest.From)
+	hashedPhoneNumber := sha1.Sum([]byte(voteRequest.From))
+
+	_, err = app.votes.Insert(session.PoolID, optionID, machine.ID, hashedPhoneNumber)
 	if err != nil {
 		app.serveError(w, err)
 		app.errorLog.Println(err)
@@ -570,16 +584,29 @@ func (app *application) createMachine(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	machine := models.Machine{IPAdrres: form.Get("ipAddress"), PhoneNumber: form.Get("phoneNumber")}
+	machine := models.Machine{IPAdrres: form.Get("ipAddress"), PhoneNumber: form.Get("phoneNumber"), Active: true}
 
-	//TODO: make transaction at inserting pool - session
-	_, err = app.machines.Insert(machine)
+	id, err := app.machines.Insert(machine)
 	if err != nil {
 		app.serveError(w, err)
 		return
 	}
 
-	app.session.Put(r, "flash", "Machine succesfully added!")
+	secureToken := app.GenerateSecureToken(20)
+
+	hashedKey, err := bcrypt.GenerateFromPassword([]byte(secureToken), 12)
+	if err != nil {
+		app.serveError(w, err)
+		return
+	}
+
+	_, err = app.apiKeys.Insert(id, hashedKey)
+	if err != nil {
+		app.serveError(w, err)
+		return
+	}
+
+	app.session.Put(r, "flash", fmt.Sprintf("Machine succesfully added! \nHere is your secure token: %s. \nSeve the token becouse it will not be visible anymore!", secureToken))
 
 	// Redirect the user to the relevant page for the pool
 	http.Redirect(w, r, fmt.Sprintf("/"), http.StatusSeeOther)

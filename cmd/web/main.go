@@ -57,6 +57,7 @@ func main() {
 		users:         &mysql.UserModel{DB: db},
 		machines:      &mysql.MachineModel{DB: db},
 		sessions:      &mysql.SessionModel{DB: db},
+		apiKeys:       &mysql.ApiKeyModel{DB: db},
 		votes:         &mysql.VoteModel{DB: db},
 		templateCache: templateCache,
 		location:      loc,

@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"runtime/debug"
@@ -63,4 +65,12 @@ func (app *application) authenticatedUser(r *http.Request) *models.User {
 	}
 
 	return user
+}
+
+func (app *application) GenerateSecureToken(length int) string {
+	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		return ""
+	}
+	return hex.EncodeToString(b)
 }

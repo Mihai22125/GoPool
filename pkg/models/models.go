@@ -53,6 +53,7 @@ type Machine struct {
 	ID          int
 	PhoneNumber string
 	IPAdrres    string
+	Active      bool
 }
 
 type Session struct {
@@ -74,6 +75,7 @@ type VoteRequest struct {
 	Text      string `json:"text"`
 	From      string `json:"from"`
 	DateTime  string `json:"date_time"`
+	Key       string `json:"key"`
 }
 
 type Result struct {

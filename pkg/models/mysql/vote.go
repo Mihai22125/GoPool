@@ -10,7 +10,7 @@ type VoteModel struct {
 }
 
 // Insert will insert a new pool int the database
-func (model *VoteModel) Insert(poolID, optionID, machineID int, from string) (int, error) {
+func (model *VoteModel) Insert(poolID, optionID, machineID int, from [20]byte) (int, error) {
 	stmt := `INSERT INTO vote (pool_id, option_id, machine_id, phone) VALUES (?, ?, ?, ?)`
 	result, err := model.DB.Exec(stmt, poolID, optionID, machineID, from)
 	if err != nil {
@@ -19,8 +19,8 @@ func (model *VoteModel) Insert(poolID, optionID, machineID int, from string) (in
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, 
-		err
+		return 0,
+			err
 	}
 
 	return int(id), nil
@@ -32,10 +32,10 @@ func (model *VoteModel) CountByOptionID(poolID, optionID int) (int, error) {
 		return 0, err
 	}
 	defer rows.Close()
-	
+
 	var count int
-	
-	for rows.Next() {   
+
+	for rows.Next() {
 		if err := rows.Scan(&count); err != nil {
 			return 0, err
 		}
@@ -44,21 +44,20 @@ func (model *VoteModel) CountByOptionID(poolID, optionID int) (int, error) {
 	return count, nil
 }
 
-// func (model *SessionModel) CountByOptionIDDistinct(poolID, optionID int) (int, error) {
-// 	rows, err := model.DB.Query("SELECT COUNT(*) FROM vote WHERE pool_id = ? AND option_id = ?")
-// 	if err != nil {
-// 		return 0, err
-// 	}
-// 	defer rows.Close()
-	
-// 	var count int
-	
-// 	for rows.Next() {   
-// 		if err := rows.Scan(&count); err != nil {
-// 			return 0, err
-// 		}
-// 	}
+func (model *VoteModel) CountByOptionIDDistinct(poolID, optionID int) (int, error) {
+	rows, err := model.DB.Query("SELECT COUNT(DISTINCT phone) FROM vote WHERE pool_id = ? AND option_id = ?", poolID, optionID)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
 
-// 	return count, nil
-// }
+	var count int
 
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			return 0, err
+		}
+	}
+
+	return count, nil
+}
