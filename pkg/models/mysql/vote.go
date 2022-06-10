@@ -10,7 +10,7 @@ type VoteModel struct {
 }
 
 // Insert will insert a new pool int the database
-func (model *VoteModel) Insert(poolID, optionID, machineID int, from [20]byte) (int, error) {
+func (model *VoteModel) Insert(poolID, optionID, machineID int, from string) (int, error) {
 	stmt := `INSERT INTO vote (pool_id, option_id, machine_id, phone) VALUES (?, ?, ?, ?)`
 	result, err := model.DB.Exec(stmt, poolID, optionID, machineID, from)
 	if err != nil {

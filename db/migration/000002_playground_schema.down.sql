@@ -1,0 +1,12 @@
+ALTER TABLE VOTE 
+	MODIFY COLUMN phone CHAR(60) NOT NULL;
+
+ALTER TABLE machine
+	ADD COLUMN active TINYINT NOT NULL DEFAULT 1;
+
+CREATE TABLE api_key (
+	key_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	machine_id INT NOT NULL,
+	hashed_key CHAR(60) NOT NULL,
+	FOREIGN KEY (machine_id) REFERENCES machine (machine_id)
+);

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net"
 	"sort"
@@ -553,7 +554,7 @@ func (app *application) createVote(w http.ResponseWriter, r *http.Request) {
 
 	hashedPhoneNumber := sha1.Sum([]byte(voteRequest.From))
 
-	_, err = app.votes.Insert(session.PoolID, optionID, machine.ID, hashedPhoneNumber)
+	_, err = app.votes.Insert(session.PoolID, optionID, machine.ID, base64.StdEncoding.EncodeToString(hashedPhoneNumber))
 	if err != nil {
 		app.serveError(w, err)
 		app.errorLog.Println(err)
